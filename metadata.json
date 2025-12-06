@@ -1,0 +1,5 @@
+{
+  "name": "Hyper Pong Retro",
+  "description": "An advanced retro Pong clone with power-ups, multiple control schemes, and AI opponents.",
+  "requestFramePermissions": []
+}
