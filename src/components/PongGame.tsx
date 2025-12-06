@@ -92,7 +92,8 @@ const PongGame: React.FC<PongGameProps> = ({ config, onGameOver, onExit }) => {
       radius: radius,
       speed: BALL_SPEED_BASE * speedMult,
       lastHitBy: null,
-      attachedTo: null
+      attachedTo: null,
+      trail: []
     };
   };
 
@@ -419,6 +420,15 @@ const PongGame: React.FC<PongGameProps> = ({ config, onGameOver, onExit }) => {
     for (let i = ballsRef.current.length - 1; i >= 0; i--) {
         const b = ballsRef.current[i];
         
+        // Record trail
+        if (!b.trail) b.trail = [];
+        // Add current position to trail
+        b.trail.push({ x: b.pos.x, y: b.pos.y });
+        // Limit trail length
+        if (b.trail.length > 20) {
+            b.trail.shift();
+        }
+
         // Sticky Ball
         if (b.attachedTo) {
             const owner = b.attachedTo === 'left' ? leftPaddleRef.current : rightPaddleRef.current;
@@ -527,6 +537,8 @@ const PongGame: React.FC<PongGameProps> = ({ config, onGameOver, onExit }) => {
                      // Add slight velocity boost out
                      b.vel.x *= 1.1;
                      b.vel.y *= 1.1;
+                     // Reset trail on teleport to avoid cross-screen lines if we were drawing lines
+                     b.trail = [];
                  }
              });
         } else {
@@ -1001,6 +1013,22 @@ const PongGame: React.FC<PongGameProps> = ({ config, onGameOver, onExit }) => {
 
     // Balls
     ballsRef.current.forEach(b => {
+        // Draw Trail
+        if (b.trail) {
+            b.trail.forEach((pos, index) => {
+                const ratio = index / b.trail!.length; // 0 to 1 (1 is newest)
+                const size = b.radius * ratio; 
+                const opacity = ratio * 0.4;
+                
+                ctx.beginPath();
+                ctx.arc(pos.x, pos.y, size, 0, Math.PI * 2);
+                ctx.fillStyle = b.isGhost 
+                    ? `rgba(255,255,255,${opacity * 0.2})` 
+                    : `rgba(255,255,255,${opacity})`;
+                ctx.fill();
+            });
+        }
+
         ctx.beginPath();
         ctx.arc(b.pos.x, b.pos.y, b.radius, 0, Math.PI * 2);
         ctx.fillStyle = b.isGhost ? 'rgba(255,255,255,0.2)' : COLORS.ball;

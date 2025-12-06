@@ -40,6 +40,7 @@ export interface Ball {
   attachTime?: number;
   attachOffset?: number;
   lastPortalId?: string; // To prevent immediate reentry
+  trail: Vector2[];
 }
 
 export interface Paddle {
