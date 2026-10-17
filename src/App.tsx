@@ -275,6 +275,17 @@ const App: React.FC = () => {
             <Button onClick={startGame} className="w-full mt-8 bg-gradient-to-r from-pink-600 to-cyan-600 border-none hover:from-pink-500 hover:to-cyan-500">
                 START GAME
             </Button>
+
+            {window.self === window.top && (
+              <a
+                href="https://fbaio.org/#/desktop"
+                target="_blank"
+                rel="noopener"
+                className="block text-center text-xs text-gray-500 hover:text-white font-mono uppercase tracking-wide"
+              >
+                More tools &amp; games: AIO Desktop
+              </a>
+            )}
           </div>
         </div>
       )}
